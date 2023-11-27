@@ -1,0 +1,5 @@
+# All files checked in using LF
+* text=auto
+
+# Windows-specific files use CRLF
+*.bat eol=crlf
