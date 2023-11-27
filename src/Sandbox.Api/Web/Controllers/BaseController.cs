@@ -3,7 +3,7 @@
 namespace Sandbox.Api.Web.Controllers;
 
 [ApiController]
-[Route("/api/{version:apiVersion}/[controller]")]
+[Route("/api/v{version:apiVersion}/[controller]")]
 public abstract class BaseController : ControllerBase
 {
     
