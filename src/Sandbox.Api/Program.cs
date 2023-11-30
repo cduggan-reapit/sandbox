@@ -11,7 +11,7 @@ Log.Information($"Initialising {Assembly.GetExecutingAssembly().GetName().Name} 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddLogging()
-    // AddApplicationServices()
+    .AddApplicationServices()
     .AddSwagger()
     .AddWebServices();
 

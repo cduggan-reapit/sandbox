@@ -1,5 +1,8 @@
-﻿using Microsoft.Extensions.Options;
+﻿using System.Reflection;
+using Microsoft.Extensions.Options;
 using Sandbox.Api.Startup.SwaggerOptions;
+using Sandbox.Api.Web.Errors;
+using Swashbuckle.AspNetCore.Filters;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Sandbox.Api.Startup;
@@ -9,9 +12,16 @@ public static class ConfigureSwagger
     public static WebApplicationBuilder AddSwagger(this WebApplicationBuilder builder)
     {
         builder.Services.AddEndpointsApiExplorer();
+        
+        // Swagger examples: https://github.com/mattfrear/Swashbuckle.AspNetCore.Filters#installation
+        builder.Services.AddSwaggerExamples();
+        builder.Services.AddSwaggerExamplesFromAssemblyOf<ErrorModelExampleProvider>();
         builder.Services.AddSwaggerGen(o =>
-            o.OperationFilter<ApiVersionOperationFilter>()
-        );
+        {
+            o.OperationFilter<ApiVersionOperationFilter>();
+            o.ExampleFilters();
+        });
+
 
         builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerGenOptions>();
         return builder;
