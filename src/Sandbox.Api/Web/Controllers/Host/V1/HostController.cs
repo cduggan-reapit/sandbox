@@ -38,7 +38,7 @@ public class HostController : BaseController
         catch (ValidationException ex)
         {
             _logger.LogInformation("Validation failed when retrieving Host version");
-            return BadRequest(ErrorModelFactory.GetErrorModel(ex.Errors));
+            return BadRequest(ErrorModelFactory.GetErrorModelFromValidationResult(ex.Errors));
         }
         catch (Exception ex)
         {
