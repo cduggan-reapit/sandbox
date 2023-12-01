@@ -1,20 +1,26 @@
-﻿using System.Reflection;
-using Asp.Versioning;
+﻿using Asp.Versioning;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Sandbox.Api.Core.Queries.GetHostVersion;
 using Sandbox.Api.Web.Errors;
-using Swashbuckle.AspNetCore.Filters;
 
 namespace Sandbox.Api.Web.Controllers.Host.V1;
 
+/// <summary>
+/// Controller exposing information about the application and API versions
+/// </summary>
 [ApiVersion(1.0)]
 public class HostController : BaseController
 {
     private readonly ILogger<HostController> _logger;
     private readonly IMediator _mediator;
 
+    /// <summary>
+    /// Initialize a new instance of <see cref="HostController"/>
+    /// </summary>
+    /// <param name="logger"></param>
+    /// <param name="mediator"></param>
     public HostController(ILogger<HostController> logger, IMediator mediator)
     {
         _mediator = mediator;
@@ -55,6 +61,6 @@ public class HostController : BaseController
     /// <returns>Version number in the format major.minor.build.revision</returns>
     [HttpGet("api-version")]
     [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
-    public IActionResult GetApiVersion(ApiVersion version, [FromHeader(Name = "If-Match")] string? etag = null)
+    public IActionResult GetApiVersion(ApiVersion version)
         => Ok(version.ToString());
 }
