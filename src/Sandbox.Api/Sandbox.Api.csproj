@@ -21,4 +21,8 @@
     <ProjectReference Include="..\Sandbox.Api.Core\Sandbox.Api.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="Sandbox.Api.Tests" />
+  </ItemGroup>
+
 </Project>
