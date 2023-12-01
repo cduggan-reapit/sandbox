@@ -50,9 +50,11 @@ public class HostController : BaseController
     /// <summary>
     /// Get the version number of the Sandbox Api
     /// </summary>
+    /// <param name="version"></param>
+    /// <param name="etag">something something concurrency</param>
     /// <returns>Version number in the format major.minor.build.revision</returns>
     [HttpGet("api-version")]
     [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
-    public IActionResult GetApiVersion(ApiVersion version)
+    public IActionResult GetApiVersion(ApiVersion version, [FromHeader(Name = "If-Match")] string? etag = null)
         => Ok(version.ToString());
 }

@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
 using Sandbox.Api.Startup.SwaggerOptions;
 using Sandbox.Api.Web.Errors;
 using Swashbuckle.AspNetCore.Filters;
@@ -20,9 +19,11 @@ public static class ConfigureSwagger
         {
             o.OperationFilter<ApiVersionOperationFilter>();
             o.ExampleFilters();
+
+            var xmlPath = Path.Combine(AppContext.BaseDirectory, "Sandbox.Api.xml");
+            o.IncludeXmlComments(xmlPath);
         });
-
-
+        
         builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerGenOptions>();
         return builder;
     }
