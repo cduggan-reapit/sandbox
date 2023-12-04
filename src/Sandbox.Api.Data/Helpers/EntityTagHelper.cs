@@ -27,7 +27,7 @@ public static class EntityTagHelper
     private static string GetHashString(string text)
     {
         var bytes = Encoding.UTF8.GetBytes(text);
-        var byteHash = SHA256.HashData(bytes);
-        return Encoding.UTF8.GetString(byteHash);
+        var byteHash = MD5.HashData(bytes);
+        return string.Concat(byteHash.Select(b => $"{b:x2}"));
     }
 }

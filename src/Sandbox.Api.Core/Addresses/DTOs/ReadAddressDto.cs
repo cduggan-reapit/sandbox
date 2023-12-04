@@ -8,7 +8,7 @@ public class ReadAddressDto : BaseReadDto
     /// <summary>
     /// The type of address (residential/commercial/unknown)
     /// </summary>
-    public AddressType AddressType { get; set; } = AddressType.Unknown;
+    public string AddressType { get; set; } = default!;
 
     /// <summary>
     /// Building name/number

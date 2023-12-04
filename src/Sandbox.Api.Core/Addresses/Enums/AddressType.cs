@@ -18,7 +18,7 @@ public class AddressType
     /// <summary>
     /// AddressType value representing Commercial addresses
     /// </summary>
-    public static AddressType Commercial = new(1, "commercial");
+    public static AddressType Commercial = new(2, "commercial");
     
     /// <summary>
     /// The integer key representing an address type, as used by the database
@@ -29,11 +29,14 @@ public class AddressType
     /// String description for an address type
     /// </summary>
     private string Value { get; init; }
+    
+    /// <inheritdoc />
+    public override string ToString() => Value;
 
     /// <summary>
     /// Collection of registered AddressType values 
     /// </summary>
-    public static IList<AddressType> Values { get; } = new List<AddressType>();
+    public static IList<AddressType> Values => new [] { Unknown, Commercial, Residential };
     
     /// <summary>
     /// Initializes a new <see cref="AddressType"/>
@@ -44,7 +47,6 @@ public class AddressType
     {
         Key = key;
         Value = displayName;
-        Values.Add(this);
     }
 
     /// <summary>
@@ -76,6 +78,6 @@ public class AddressType
     /// </summary>
     /// <param name="value">The string value of the AddressType</param>
     /// <returns>The AddressType registered with the provided value. Returns Unknown if the value is not registered.</returns>
-    public static implicit operator AddressType?(string value)
-        => Values.SingleOrDefault(v => v.Value == value) ?? Unknown; 
+    public static implicit operator AddressType(string value)
+        => Values.SingleOrDefault(v => v.Value == value) ?? Unknown;
 }

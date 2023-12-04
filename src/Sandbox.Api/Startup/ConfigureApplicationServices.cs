@@ -8,6 +8,8 @@ public static class ConfigureApplicationServices
     {
         builder.Services.ConfigureServices();
 
+        builder.Services.AddAutoMapper(typeof(Program).Assembly);
+
         return builder;
     }
 }

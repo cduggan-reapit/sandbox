@@ -31,8 +31,4 @@
     <InternalsVisibleTo Include="Sandbox.Api.Tests" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Web\Controllers\Addresses\V1.0\Models\" />
-  </ItemGroup>
-
 </Project>

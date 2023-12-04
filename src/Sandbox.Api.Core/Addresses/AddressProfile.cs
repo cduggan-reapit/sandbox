@@ -17,6 +17,8 @@ public class AddressProfile : Profile
             .ForMember(dest => dest.AddressType, op => op.MapFrom(src => (AddressType)src.AddressType));
         
         // Map from Create command to database entity
-        CreateMap<CreateAddressCommand, Address>();
+        CreateMap<CreateAddressCommand, Address>()
+            .ForMember(dest => dest.AddressType, 
+                op => op.MapFrom(src => (AddressType)src.AddressType));
     }
 }

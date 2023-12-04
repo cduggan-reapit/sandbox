@@ -10,7 +10,7 @@ public class CreateAddressCommandValidator : AbstractValidator<CreateAddressComm
     {
         // Address Type must be valid address
         RuleFor(command => command.AddressType)
-            .Must(addressType => AddressType.Values.Contains(addressType))
+            .Must(addressType => AddressType.Values.Select(v => (string)v).Contains(addressType))
             .WithMessage(AddressTypeInvalid);
 
         // Number must be set and be less than or equal to 100 characters in length
@@ -42,7 +42,7 @@ public class CreateAddressCommandValidator : AbstractValidator<CreateAddressComm
             .MaximumLength(100).WithMessage(CountryExceedsMaxLength);
         
         // Postcode must be set and be less than or equal to 50 characters in length
-        RuleFor(command => command.Country)
+        RuleFor(command => command.PostCode)
             .NotEmpty().WithMessage(PostcodeRequired)
             .MaximumLength(50).WithMessage(PostcodeExceedsMaxLength);
     }
