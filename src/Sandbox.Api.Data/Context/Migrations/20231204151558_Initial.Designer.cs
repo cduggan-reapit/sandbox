@@ -11,7 +11,7 @@ using Sandbox.Api.Data.Context;
 namespace Sandbox.Api.Data.Context.Migrations
 {
     [DbContext(typeof(SandboxDbContext))]
-    [Migration("20231204142211_Initial")]
+    [Migration("20231204151558_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -20,7 +20,7 @@ namespace Sandbox.Api.Data.Context.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.0");
 
-            modelBuilder.Entity("Sandbox.Api.Data.Models.Entities.Address", b =>
+            modelBuilder.Entity("Sandbox.Api.Data.Entities.Address", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -31,13 +31,16 @@ namespace Sandbox.Api.Data.Context.Migrations
 
                     b.Property<string>("City")
                         .IsRequired()
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Country")
                         .IsRequired()
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("County")
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<DateTimeOffset>("Created")
@@ -48,17 +51,21 @@ namespace Sandbox.Api.Data.Context.Migrations
 
                     b.Property<string>("Number")
                         .IsRequired()
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("PostCode")
                         .IsRequired()
+                        .HasMaxLength(50)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("State")
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Street")
                         .IsRequired()
+                        .HasMaxLength(500)
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");

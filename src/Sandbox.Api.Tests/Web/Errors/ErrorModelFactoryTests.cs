@@ -24,7 +24,7 @@ public class ErrorModelFactoryTests
                 { "Property Two", new [] { "Error Three" } }
             });
 
-        var actual = ErrorModelFactory.GetErrorModelFromValidationResult(input);
+        var actual = input.GetErrorModel();
 
         actual.Should().BeEquivalentTo(expectedResult);
     }

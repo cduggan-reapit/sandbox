@@ -2,7 +2,7 @@
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Sandbox.Api.Core.Queries.GetHostVersion;
+using Sandbox.Api.Core.Hosts.Queries.GetHostVersion;
 using Sandbox.Api.Web.Errors;
 
 namespace Sandbox.Api.Web.Controllers.Host.V1;
@@ -44,7 +44,7 @@ public class HostController : BaseController
         catch (ValidationException ex)
         {
             _logger.LogInformation("Validation failed when retrieving Host version");
-            return BadRequest(ErrorModelFactory.GetErrorModelFromValidationResult(ex.Errors));
+            return BadRequest(ex.Errors.GetErrorModel());
         }
         catch (Exception ex)
         {

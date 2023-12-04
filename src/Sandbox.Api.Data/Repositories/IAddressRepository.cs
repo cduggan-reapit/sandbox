@@ -1,5 +1,5 @@
 ﻿using System.Linq.Expressions;
-using Sandbox.Api.Data.Models.Entities;
+using Sandbox.Api.Data.Entities;
 
 namespace Sandbox.Api.Data.Repositories;
 
@@ -10,7 +10,7 @@ public interface IAddressRepository
     /// </summary>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task<IEnumerable<Address>> GetAsync(CancellationToken cancellationToken = default);
+    Task<IEnumerable<Address>> GetAllAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Retrieve a collection of addresses meeting given criteria from the database

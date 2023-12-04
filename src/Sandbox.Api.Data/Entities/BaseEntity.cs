@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Sandbox.Api.Data.Models.Entities;
+namespace Sandbox.Api.Data.Entities;
 
 public abstract class BaseEntity
 {

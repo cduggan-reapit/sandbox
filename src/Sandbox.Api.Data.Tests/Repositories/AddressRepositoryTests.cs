@@ -3,7 +3,7 @@ using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Sandbox.Api.Common.Helpers;
 using Sandbox.Api.Data.Context;
-using Sandbox.Api.Data.Models.Entities;
+using Sandbox.Api.Data.Entities;
 using Sandbox.Api.Data.Repositories;
 
 namespace Sandbox.Api.Data.Tests.Repositories;
@@ -130,7 +130,7 @@ public class AddressRepositoryTests : IDisposable
     public async Task GetAsync_ReturnsEmptyCollection_WhenDatabaseEmpty()
     {
         var sut = CreateSut();
-        var result = await sut.GetAsync();
+        var result = await sut.GetAllAsync();
         
         result.Should().HaveCount(0);
     }
@@ -144,7 +144,7 @@ public class AddressRepositoryTests : IDisposable
         await _context.SaveChangesAsync();
         
         var sut = CreateSut();
-        var result = await sut.GetAsync() as List<Address>;
+        var result = await sut.GetAllAsync() as List<Address>;
         
         result.Should().NotBeNull();
         result.Should().HaveCount(5);

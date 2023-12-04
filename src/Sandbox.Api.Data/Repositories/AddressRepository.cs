@@ -1,7 +1,7 @@
 ﻿using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Sandbox.Api.Data.Context;
-using Sandbox.Api.Data.Models.Entities;
+using Sandbox.Api.Data.Entities;
 
 namespace Sandbox.Api.Data.Repositories;
 
@@ -18,7 +18,7 @@ public class AddressRepository : IAddressRepository
         _dbContext = dbContext;
     }
 
-    public async Task<IEnumerable<Address>> GetAsync(CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<Address>> GetAllAsync(CancellationToken cancellationToken = default)
         => await _dbContext.Addresses.ToListAsync(cancellationToken);
     
     public async Task<IEnumerable<Address>> GetFilteredAsync(Expression<Func<Address, bool>> criteria, 

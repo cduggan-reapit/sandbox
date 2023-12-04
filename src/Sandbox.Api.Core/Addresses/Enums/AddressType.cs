@@ -1,4 +1,4 @@
-﻿namespace Sandbox.Api.Data.Models.Enums;
+﻿namespace Sandbox.Api.Core.Addresses.Enums;
 
 /// <summary>
 /// Enum class mapping the integer AddressType value to readable strings
@@ -33,7 +33,7 @@ public class AddressType
     /// <summary>
     /// Collection of registered AddressType values 
     /// </summary>
-    private static IList<AddressType> Values { get; } = new List<AddressType>();
+    public static IList<AddressType> Values { get; } = new List<AddressType>();
     
     /// <summary>
     /// Initializes a new <see cref="AddressType"/>

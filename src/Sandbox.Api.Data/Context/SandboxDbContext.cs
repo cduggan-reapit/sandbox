@@ -1,11 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Sandbox.Api.Common.Helpers;
-using Sandbox.Api.Data.Models.Entities;
+using Sandbox.Api.Data.Entities;
 
 namespace Sandbox.Api.Data.Context;
 
 public class SandboxDbContext : DbContext
 {
+    public SandboxDbContext()
+    {
+    }
+    
     public SandboxDbContext(DbContextOptions<SandboxDbContext> options)
         : base(options)
     {

@@ -10,6 +10,8 @@ public static class Startup
 {
     public static IServiceCollection ConfigureServices(this IServiceCollection services, IConfiguration configuration)
     {
+        var connstring = configuration.GetConnectionString("Sqlite");
+        
         services.AddDbContext<SandboxDbContext>(options =>
             options.UseSqlite(configuration.GetConnectionString("Sqlite")));
 

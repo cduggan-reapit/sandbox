@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace Sandbox.Api.Core.Queries.GetHostVersion;
+namespace Sandbox.Api.Core.Hosts.Queries.GetHostVersion;
 
 public class GetHostVersionQueryValidator : AbstractValidator<GetHostVersionQuery>
 {
