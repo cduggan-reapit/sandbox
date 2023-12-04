@@ -5,6 +5,8 @@ namespace Sandbox.Api.Common.Tests.Helpers;
 
 public class DateTimeHelperTests : IDisposable
 {
+    private bool _disposed;
+
     [Fact]
     public void DateTimeHelper_ShouldReturnConfiguredDate_WhenDateIsSet()
     {
@@ -33,19 +35,26 @@ public class DateTimeHelperTests : IDisposable
 
         now.Should().BeCloseTo(DateTimeOffset.Now, TimeSpan.FromSeconds(1));
     }
-    
 
+    ~DateTimeHelperTests()
+        => Dispose(false);
+    
     public void Dispose()
     {
         Dispose(true);
         GC.SuppressFinalize(this);
     }
 
-    private static void Dispose(bool isDisposing)
+    private void Dispose(bool disposing)
     {
-        if (isDisposing)
+        if (_disposed)
+            return;
+            
+        if (disposing)
         {
             DateTimeHelper.Reset();
         }
+
+        _disposed = true;
     }
 }
