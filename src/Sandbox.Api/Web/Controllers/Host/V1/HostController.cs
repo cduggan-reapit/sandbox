@@ -39,7 +39,7 @@ public class HostController : BaseController
         _logger.LogInformation("Attempting to retrieve Host version");
         try
         {
-            return Ok(await _mediator.Send(new GetHostVersionQuery(false)));
+            return Ok(await _mediator.Send(new GetHostVersionQuery()));
         }
         catch (ValidationException ex)
         {
@@ -52,15 +52,4 @@ public class HostController : BaseController
             return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
         }
     }
-
-    /// <summary>
-    /// Get the version number of the Sandbox Api
-    /// </summary>
-    /// <param name="version"></param>
-    /// <param name="etag">something something concurrency</param>
-    /// <returns>Version number in the format major.minor.build.revision</returns>
-    [HttpGet("api-version")]
-    [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
-    public IActionResult GetApiVersion(ApiVersion version)
-        => Ok(version.ToString());
 }

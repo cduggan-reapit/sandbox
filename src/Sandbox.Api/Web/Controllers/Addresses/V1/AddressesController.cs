@@ -6,10 +6,10 @@ using Microsoft.AspNetCore.Mvc;
 using Sandbox.Api.Core.Addresses.Commands.CreateAddress;
 using Sandbox.Api.Core.Addresses.DTOs;
 using Sandbox.Api.Core.Addresses.Queries.GetAllAddresses;
-using Sandbox.Api.Web.Controllers.Addresses.V1._0.Models;
+using Sandbox.Api.Web.Controllers.Addresses.V1.Models;
 using Sandbox.Api.Web.Errors;
 
-namespace Sandbox.Api.Web.Controllers.Addresses.V1._0;
+namespace Sandbox.Api.Web.Controllers.Addresses.V1;
 
 /// <summary>
 /// Controller exposing information and management features for addresses

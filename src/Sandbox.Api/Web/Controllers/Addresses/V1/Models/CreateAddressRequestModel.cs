@@ -1,4 +1,4 @@
-﻿namespace Sandbox.Api.Web.Controllers.Addresses.V1._0.Models;
+﻿namespace Sandbox.Api.Web.Controllers.Addresses.V1.Models;
 
 /// <summary>
 /// Request model for the creation of new Addresses 
