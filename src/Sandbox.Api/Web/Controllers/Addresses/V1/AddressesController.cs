@@ -135,11 +135,13 @@ public class AddressesController : BaseController
         try
         {
             var command = _mapper.Map<CreateAddressCommand>(model);
-            var createdDto = await _mediator.Send(command);
+            var dto = await _mediator.Send(command);
 
-            SetResponseHeaderETag(createdDto.EntityTag);
+            SetResponseHeaderETag(dto.EntityTag);
+
+            var responseModel = _mapper.Map<ReadAddressResponseModel>(dto);
             
-            return CreatedAtAction(nameof(GetAddressById), new { id = createdDto.Id }, createdDto);
+            return CreatedAtAction(nameof(GetAddressById), new { id = responseModel.Id }, responseModel);
         }
         catch (ValidationException ex)
         {

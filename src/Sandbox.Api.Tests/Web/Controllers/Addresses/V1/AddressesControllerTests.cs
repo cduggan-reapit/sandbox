@@ -1,5 +1,7 @@
-﻿using AutoMapper;
+﻿using System.Collections;
+using AutoMapper;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Sandbox.Api.Core.Addresses.Commands.CreateAddress;
@@ -34,6 +36,8 @@ public class AddressesControllerTests
             new() { Id = Guid.NewGuid(), Created = DateTimeOffset.UnixEpoch, Modified = DateTimeOffset.Now },
             new() { Id = Guid.NewGuid(), Created = DateTimeOffset.UnixEpoch, Modified = DateTimeOffset.Now }
         };
+
+        var expected = _mapper.Map<IEnumerable<ReadAddressResponseModel>>(addresses);
         
         _mediator.Setup(m => m.Send(It.IsAny<GetAllAddressesQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(addresses)
@@ -46,8 +50,8 @@ public class AddressesControllerTests
         var result = response as OkObjectResult;
         result.Should().NotBeNull();
 
-        var content = result!.Value as IEnumerable<ReadAddressDto>;
-        content.Should().BeEquivalentTo(addresses);
+        var content = result!.Value as IEnumerable<ReadAddressResponseModel>;
+        content.Should().BeEquivalentTo(expected);
         
         _mediator.Verify(m => m.Send(It.IsAny<GetAllAddressesQuery>(), It.IsAny<CancellationToken>()), Times.Once);
     }
@@ -78,7 +82,7 @@ public class AddressesControllerTests
     // Create Address should return BadRequest
     // Create Address should return InternalServerError
 
-    [Fact] public async Task GetAllAddresses_ShouldReturnAllAddresses_WhenValidModelProvided()
+    [Fact] public async Task CreateAddress_ShouldReturnAddress_WhenValidModelProvided()
     {
         var model = new CreateAddressRequestModel(
             AddressType: "commercial",
@@ -91,7 +95,7 @@ public class AddressesControllerTests
             PostCode: "15046"
         );
 
-        var expectedDto = new ReadAddressDto
+        var dto = new ReadAddressDto
         {
             AddressType = model.AddressType,
             Number = model.Number,
@@ -105,22 +109,31 @@ public class AddressesControllerTests
             EntityTag = "TestEntityTag"
         };
         
+        var expected = _mapper.Map<ReadAddressResponseModel>(dto);
+        
         _mediator.Setup(m => m.Send(It.IsAny<CreateAddressCommand>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(expectedDto)
+            .ReturnsAsync(dto)
             .Verifiable();
 
         var sut = CreateSut();
-
+        
         var response = await sut.CreateAddress(model);
         
         var result = response as CreatedAtActionResult;
         result.Should().NotBeNull();
 
-        var resultModel = result!.Value as ReadAddressDto;
-        resultModel.Should().BeEquivalentTo(expectedDto);
+        var resultModel = result!.Value as ReadAddressResponseModel;
+        resultModel.Should().BeEquivalentTo(expected);
         
         _mediator.Verify(m => m.Send(It.IsAny<CreateAddressCommand>(), It.IsAny<CancellationToken>()), Times.Once);
     }
     
-    private AddressesController CreateSut() => new AddressesController(_mediator.Object, _mapper, _logger.Object);
+    private AddressesController CreateSut() 
+        => new (_mediator.Object, _mapper, _logger.Object)
+        {
+            ControllerContext = new ControllerContext()
+            {
+                HttpContext = new DefaultHttpContext()
+            }
+        };
 }
