@@ -60,7 +60,7 @@ public class AddressesControllerTests
     public async Task GetAllAddresses_ShouldReturnErrorModel_WhenExceptionThrown()
     {
         var exception = new FormatException("Test exception");
-        var expectedModel = exception.GetGenericErrorModel();
+        var expectedModel = exception.GetExceptionErrorModel();
             
         _mediator.Setup(m => m.Send(It.IsAny<GetAllAddressesQuery>(), It.IsAny<CancellationToken>()))
             .ThrowsAsync(exception);
@@ -73,7 +73,7 @@ public class AddressesControllerTests
         result.Should().NotBeNull();
         result!.StatusCode.Should().Be(500);
         
-        var actualModel = result.Value as ErrorModel;
+        var actualModel = result.Value as ValidationErrorModel;
         actualModel.Should().BeEquivalentTo(expectedModel);
     }
     

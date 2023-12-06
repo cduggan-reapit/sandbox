@@ -9,6 +9,7 @@ using Sandbox.Api.Core.Addresses.Commands.DeleteAddressById;
 using Sandbox.Api.Core.Addresses.DTOs;
 using Sandbox.Api.Core.Addresses.Queries.GetAddressById;
 using Sandbox.Api.Core.Addresses.Queries.GetAllAddresses;
+using Sandbox.Api.Data.Entities;
 using Sandbox.Api.Web.Controllers.Addresses.V1.Models;
 using Sandbox.Api.Web.Errors;
 
@@ -44,7 +45,7 @@ public class AddressesController : BaseController
     /// <returns></returns>
     [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<ReadAddressResponseModel>), 200)]
-    [ProducesErrorResponseType(typeof(ErrorModel))]
+    [ProducesErrorResponseType(typeof(ApplicationErrorModel))]
     public async Task<IActionResult> GetAllAddresses()
     {
         _logger.LogInformation("Attempting to fetch all addresses");
@@ -57,7 +58,7 @@ public class AddressesController : BaseController
         catch (Exception ex)
         {
             _logger.LogError(ex, ex.Message);
-            return StatusCode(StatusCodes.Status500InternalServerError, ex.GetGenericErrorModel());
+            return StatusCode(StatusCodes.Status500InternalServerError, ex.GetExceptionErrorModel());
         }
     }
     
@@ -67,8 +68,8 @@ public class AddressesController : BaseController
     /// <returns></returns>
     [HttpGet("{id}")]
     [ProducesResponseType(typeof(ReadAddressResponseModel), 200)]
-    [ProducesResponseType(404)]
-    [ProducesErrorResponseType(typeof(ErrorModel))]
+    [ProducesResponseType(typeof(ApplicationErrorModel), 404)]
+    [ProducesErrorResponseType(typeof(ApplicationErrorModel))]
     public async Task<IActionResult> GetAddressById(Guid id)
     {
         _logger.LogInformation("Attempting to fetch address with Id: '{id}'", id);
@@ -87,7 +88,7 @@ public class AddressesController : BaseController
         catch (Exception ex)
         {
             _logger.LogError(ex, ex.Message);
-            return StatusCode(StatusCodes.Status500InternalServerError, ex.GetGenericErrorModel());
+            return StatusCode(StatusCodes.Status500InternalServerError, ex.GetExceptionErrorModel());
         }
     }
     
@@ -97,26 +98,30 @@ public class AddressesController : BaseController
     /// <returns></returns>
     [HttpHead("{id}")]
     [ProducesResponseType(204)]
-    [ProducesResponseType(404)]
-    [ProducesErrorResponseType(typeof(ErrorModel))]
+    [ProducesResponseType(typeof(ApplicationErrorModel), 404)]
+    [ProducesErrorResponseType(typeof(ValidationErrorModel))]
     public async Task<IActionResult> GetAddressByIdHeaders(Guid id)
     {
         _logger.LogInformation("Attempting to fetch headers for address with Id: '{id}'", id);
         try
         {
             var dto = await _mediator.Send(new GetAddressByIdQuery(id));
-            
-            if(dto == null)
-                return NotFound();
-            
+
+            if (dto == null)
+                throw new NotFoundException(nameof(Address), id);
+
             SetResponseHeaderETag(dto.EntityTag);
-            
+
             return NoContent();
+        }
+        catch (NotFoundException ex)
+        {
+            return NotFound(ex.GetNotFoundErrorModel());
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, ex.Message);
-            return StatusCode(StatusCodes.Status500InternalServerError, ex.GetGenericErrorModel());
+            return StatusCode(StatusCodes.Status500InternalServerError, ex.GetExceptionErrorModel());
         }
     }
     
@@ -127,8 +132,8 @@ public class AddressesController : BaseController
     /// <returns></returns>
     [HttpPost]
     [ProducesResponseType(typeof(ReadAddressDto), 200)]
-    [ProducesResponseType(typeof(ErrorModel), 400)]
-    [ProducesErrorResponseType(typeof(ErrorModel))]
+    [ProducesResponseType(typeof(ValidationErrorModel), 400)]
+    [ProducesErrorResponseType(typeof(ApplicationErrorModel))]
     public async Task<IActionResult> CreateAddress([FromBody] CreateAddressRequestModel model)
     {
         _logger.LogInformation("Attempting to create address");
@@ -145,12 +150,12 @@ public class AddressesController : BaseController
         }
         catch (ValidationException ex)
         {
-            return BadRequest(ex.Errors.GetErrorModel());
+            return BadRequest(ex.Errors.GetValidationErrorModel());
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, ex.Message);
-            return StatusCode(StatusCodes.Status500InternalServerError, ex.GetGenericErrorModel());
+            return StatusCode(StatusCodes.Status500InternalServerError, ex.GetExceptionErrorModel());
         }
     }
     
@@ -162,9 +167,9 @@ public class AddressesController : BaseController
     /// <returns></returns>
     [HttpDelete("{id}")]
     [ProducesResponseType(204)]
-    [ProducesResponseType(404)]
-    [ProducesResponseType(409)]
-    [ProducesErrorResponseType(typeof(ErrorModel))]
+    [ProducesResponseType(typeof(ApplicationErrorModel), 404)]
+    [ProducesResponseType(typeof(ApplicationErrorModel), 409)]
+    [ProducesErrorResponseType(typeof(ValidationErrorModel))]
     public async Task<IActionResult> DeleteAddressById(Guid id, [FromHeader(Name = "If-Match")] string? etag = null)
     {
         _logger.LogInformation("Attempting to delete address with Id: '{id}'", id);
@@ -175,16 +180,16 @@ public class AddressesController : BaseController
         }
         catch (NotFoundException ex)
         {
-            return NotFound(ex.GetErrorModel());
+            return NotFound(ex.GetNotFoundErrorModel());
         }
         catch (EntityConflictException ex)
         {
-            return Conflict(ex.GetErrorModel());
+            return Conflict(ex.GetConflictErrorModel());
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, ex.Message);
-            return StatusCode(StatusCodes.Status500InternalServerError, ex.GetGenericErrorModel());
+            return StatusCode(StatusCodes.Status500InternalServerError, ex.GetExceptionErrorModel());
         }
     }
 }

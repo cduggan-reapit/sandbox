@@ -3,13 +3,14 @@
 /// <summary>
 /// Represents an error that occurs when a requested database entity is not found
 /// </summary>
-public class NotFoundException : Exception
+public class NotFoundException : ApplicationException
 {
-    public Type ResourceType { get; set; }
+    public string ResourceType { get; set; }
     
     public Guid Id { get; set; }
     
-    public NotFoundException(Type type, Guid id)
+    public NotFoundException(string type, Guid id) 
+        : base ($"{type} not found matching Id \"{id}\"")
     {
         Id = id;
         ResourceType = type;

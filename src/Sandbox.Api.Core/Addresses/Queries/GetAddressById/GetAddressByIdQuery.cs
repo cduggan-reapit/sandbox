@@ -3,4 +3,4 @@ using Sandbox.Api.Core.Addresses.DTOs;
 
 namespace Sandbox.Api.Core.Addresses.Queries.GetAddressById;
 
-public record GetAddressByIdQuery(Guid Id) : IRequest<ReadAddressDto?>;
+public record GetAddressByIdQuery(Guid Id) : IRequest<ReadAddressDto>;

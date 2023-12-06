@@ -14,7 +14,7 @@ public static class ConfigureSwagger
         
         // Swagger examples: https://github.com/mattfrear/Swashbuckle.AspNetCore.Filters#installation
         builder.Services.AddSwaggerExamples();
-        builder.Services.AddSwaggerExamplesFromAssemblyOf<ErrorModelExampleProvider>();
+        builder.Services.AddSwaggerExamplesFromAssemblyOf<ValidationErrorModelExampleProvider>();
         builder.Services.AddSwaggerGen(o =>
         {
             o.OperationFilter<ApiVersionOperationFilter>();

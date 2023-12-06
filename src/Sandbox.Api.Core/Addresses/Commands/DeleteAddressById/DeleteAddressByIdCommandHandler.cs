@@ -23,11 +23,11 @@ public class DeleteAddressByIdCommandHandler : IRequestHandler<DeleteAddressById
         var address = await _addressRepository.GetByIdAsync(request.Id, cancellationToken);
 
         if (address == null)
-            throw new NotFoundException(typeof(Address), request.Id);
+            throw new NotFoundException(nameof(Address), request.Id);
 
         // TODO: Decide what to put in this error
         if (request.Etag != address.GenerateEtagForEntity())
-            throw new EntityConflictException("");
+            throw new EntityConflictException(address.GenerateEtagForEntity(), request.Etag ?? string.Empty);
         
         await _addressRepository.DeleteAsync(address, cancellationToken);
     }

@@ -33,7 +33,7 @@ public class HostController : BaseController
     /// <returns>Version number in the format major.minor.build.revision</returns>
     [HttpGet("version")]
     [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ValidationErrorModel), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetHostVersion()
     {
         _logger.LogInformation("Attempting to retrieve Host version");
@@ -44,7 +44,7 @@ public class HostController : BaseController
         catch (ValidationException ex)
         {
             _logger.LogInformation("Validation failed when retrieving Host version");
-            return BadRequest(ex.Errors.GetErrorModel());
+            return BadRequest(ex.Errors.GetValidationErrorModel());
         }
         catch (Exception ex)
         {

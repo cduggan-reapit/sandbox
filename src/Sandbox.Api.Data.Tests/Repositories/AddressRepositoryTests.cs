@@ -152,7 +152,7 @@ public class AddressRepositoryTests : IDisposable
     }
     
     [Fact]
-    public async Task GetByIdAsync_ReturnsNull_WhenIdNotFound()
+    public async Task GetByIdAsync_ThrowsNotFoundException_WhenIdNotFound()
     {
         var sut = CreateSut();
         var result = await sut.GetByIdAsync(Guid.Empty);
