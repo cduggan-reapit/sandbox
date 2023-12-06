@@ -48,26 +48,15 @@ public abstract class BaseRepository<T> : IBaseRepository<T> where T: BaseEntity
         await _dbContext.SaveChangesAsync(cancellationToken);
     }
     
-    public async Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task DeleteAsync(T entity, CancellationToken cancellationToken = default)
     {
-        var entity = await _dbContext.Set<T>().FindAsync(id);
-
-        if (entity == null)
-            return;
-        
         _dbContext.Set<T>().Remove(entity);
         await _dbContext.SaveChangesAsync(cancellationToken);
     }
     
-    public async Task<bool> DeleteRangeAsync(IEnumerable<Guid> ids, CancellationToken cancellationToken = default)
+    public async Task DeleteRangeAsync(IEnumerable<T> entities, CancellationToken cancellationToken = default)
     {
-        var entities = _dbContext.Set<T>().Where(a => ids.Contains(a.Id));
-
-        if (await entities.CountAsync(cancellationToken) != ids.Count())
-            return false;
-        
         _dbContext.Set<T>().RemoveRange(entities);
         await _dbContext.SaveChangesAsync(cancellationToken);
-        return true;
     }
 }

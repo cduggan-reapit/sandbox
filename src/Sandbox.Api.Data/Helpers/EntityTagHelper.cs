@@ -20,8 +20,9 @@ public static class EntityTagHelper
         // Append the modified timestamp in `YYYY-MM-DD HH:mm:ssZ` format
         hashValue += entity.Modified.ToString("u");
         
-        // Return the hash of the combined result
-        return GetHashString(hashValue);
+        // Return the hash of the combined result, wrapped in quotes per RFC:
+        // https://www.rfc-editor.org/rfc/rfc7232
+        return string.Concat('"', GetHashString(hashValue), '"');
     }
 
     private static string GetHashString(string text)

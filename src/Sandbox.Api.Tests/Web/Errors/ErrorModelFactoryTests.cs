@@ -1,4 +1,6 @@
 ﻿using FluentValidation.Results;
+using Sandbox.Api.Common.Exceptions;
+using Sandbox.Api.Data.Entities;
 using Sandbox.Api.Web.Errors;
 using static Sandbox.Api.Web.Errors.ErrorModelMessages;
 
@@ -40,6 +42,41 @@ public class ErrorModelFactoryTests
             {
                 { "Message", new[] { exception.Message } },
                 { "Type", new[] { exception.GetType().Name } }
+            }); 
+        
+        var actual = exception.GetGenericErrorModel();
+
+        actual.Should().BeEquivalentTo(expected);
+    }
+    
+    [Fact]
+    public void GetErrorModel_ShouldCreateErrorModel_FromGivenNotFoundException()
+    {
+        var exception = new NotFoundException( typeof(BaseEntity), Guid.NewGuid());
+        
+        var expected = new ErrorModel(
+            Message: ErrorModelMessages.NotFound,
+            Errors: new Dictionary<string, string[]>
+            {
+                { "Type", new[] { exception.ResourceType.Name } },
+                { "Id", new[] { exception.Id.ToString("D") } },
+            }); 
+        
+        var actual = exception.GetErrorModel();
+
+        actual.Should().BeEquivalentTo(expected);
+    }
+    
+    [Fact]
+    public void GetErrorModel_ShouldCreateErrorModel_FromGivenEntityConflictException()
+    {
+        var exception = new EntityConflictException("Test exception");
+        
+        var expected = new ErrorModel(
+            Message: ErrorModelMessages.Conflict,
+            Errors: new Dictionary<string, string[]>
+            {
+                { "Message", new[] { exception.Message } },
             }); 
         
         var actual = exception.GetErrorModel();

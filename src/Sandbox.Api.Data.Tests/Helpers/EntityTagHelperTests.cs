@@ -11,7 +11,7 @@ public class EntityTagHelperTests
         const string guidString = "00000000-0000-0000-0000-000000000001";
         var entity = new Address { Id = new Guid(guidString), Created = DateTimeOffset.UnixEpoch, Modified = DateTimeOffset.UnixEpoch } as BaseEntity;
 
-        const string expectedEtag = "b0e4c11033528bd065ace92499fc523a";
+        const string expectedEtag = "\"b0e4c11033528bd065ace92499fc523a\"";
         var firstEtag = entity.GenerateEtagForEntity();
         var secondEtag = entity.GenerateEtagForEntity();
         

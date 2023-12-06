@@ -266,12 +266,12 @@ public class AddressRepositoryTests : IDisposable
         await _context.Addresses.AddRangeAsync(testData);
         await _context.SaveChangesAsync();
 
-        var deleteId = testData.ElementAt(3).Id;
+        var deleteEntity = testData.ElementAt(3);
         
         var sut = CreateSut();
-        await sut.DeleteAsync(deleteId);
+        await sut.DeleteAsync(deleteEntity);
 
-        var deleted = await _context.Addresses.FindAsync(deleteId);
+        var deleted = await _context.Addresses.FindAsync(deleteEntity.Id);
         deleted.Should().BeNull();
 
         var retained = await _context.Addresses.ToListAsync();
@@ -288,38 +288,18 @@ public class AddressRepositoryTests : IDisposable
         
         var toDelete = new[]
         {
-            testData.ElementAt(1).Id, 
-            testData.ElementAt(3).Id
+            testData.ElementAt(1), 
+            testData.ElementAt(3)
         };
         
         var sut = CreateSut();
-        var result = await sut.DeleteRangeAsync(toDelete);
-
-        result.Should().BeTrue();
-
-        var deleted = await _context.Addresses.Where(a => toDelete.Contains(a.Id)).ToListAsync();
+        await sut.DeleteRangeAsync(toDelete);
+        
+        var deleted = await _context.Addresses.Where(a => toDelete.Select(d => d.Id).Contains(a.Id)).ToListAsync();
         deleted.Should().HaveCount(0);
 
         var retained = await _context.Addresses.ToListAsync();
         retained.Should().HaveCount(3);
-    }
-
-    [Fact]
-    public async Task DeleteRangeAsync_ShouldNotDeleteAddresses_WhenAnInvalidIdProvidedInCollection()
-    {
-        var testData = GenerateTestData(5).ToList();
-        var toDelete = new[] { GenerateGuid(2), GenerateGuid(6) };
-        
-        await _context.Addresses.AddRangeAsync(testData);
-        await _context.SaveChangesAsync();
-        
-        var sut = CreateSut();
-        var result = await sut.DeleteRangeAsync(toDelete);
-        
-        result.Should().BeFalse();
-        
-        var retained = await _context.Addresses.ToListAsync();
-        retained.Should().HaveCount(5);
     }
 
     // Private members

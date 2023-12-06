@@ -63,16 +63,16 @@ public interface IBaseRepository<T> where T: BaseEntity
     /// <summary>
     /// Deletes the entity matching the given Id from the database
     /// </summary>
-    /// <param name="id">The Id of the entity to delete</param>
+    /// <param name="entity">The entity to delete</param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task DeleteAsync(Guid id, CancellationToken cancellationToken = default);
+    Task DeleteAsync(T entity, CancellationToken cancellationToken = default);
     
     /// <summary>
     /// Deletes the entities matching the given Ids from the database
     /// </summary>
-    /// <param name="ids">The Ids of the entities to delete</param>
+    /// <param name="entities">The entities to delete</param>
     /// <param name="cancellationToken"></param>
     /// <returns>Returns false if an invalid Id was detected.</returns>
-    Task<bool> DeleteRangeAsync(IEnumerable<Guid> ids, CancellationToken cancellationToken = default);
+    Task DeleteRangeAsync(IEnumerable<T> entities, CancellationToken cancellationToken = default);
 }

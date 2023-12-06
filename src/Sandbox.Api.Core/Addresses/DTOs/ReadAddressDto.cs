@@ -1,5 +1,4 @@
-﻿using Sandbox.Api.Core.Addresses.Enums;
-using Sandbox.Api.Core.DTOs;
+﻿using Sandbox.Api.Core.DTOs;
 
 namespace Sandbox.Api.Core.Addresses.DTOs;
 

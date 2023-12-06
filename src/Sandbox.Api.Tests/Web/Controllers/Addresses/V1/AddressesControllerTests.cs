@@ -56,7 +56,7 @@ public class AddressesControllerTests
     public async Task GetAllAddresses_ShouldReturnErrorModel_WhenExceptionThrown()
     {
         var exception = new FormatException("Test exception");
-        var expectedModel = exception.GetErrorModel();
+        var expectedModel = exception.GetGenericErrorModel();
             
         _mediator.Setup(m => m.Send(It.IsAny<GetAllAddressesQuery>(), It.IsAny<CancellationToken>()))
             .ThrowsAsync(exception);
