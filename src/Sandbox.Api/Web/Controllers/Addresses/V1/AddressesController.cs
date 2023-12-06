@@ -59,6 +59,27 @@ public class AddressesController : BaseController
     /// <summary>
     /// 
     /// </summary>
+    /// <returns></returns>
+    [HttpGet("{id}")]
+    [ProducesResponseType(typeof(ReadAddressDto), 200)]
+    [ProducesErrorResponseType(typeof(ErrorModel))]
+    public IActionResult GetAddressById(Guid id)
+    {
+        _logger.LogInformation("Attempting to fetch addresses with Id: '{id}'", id);
+        try
+        {
+            throw new NotImplementedException();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+            return StatusCode(StatusCodes.Status500InternalServerError, ex.GetErrorModel());
+        }
+    }
+    
+    /// <summary>
+    /// 
+    /// </summary>
     /// <param name="model"></param>
     /// <returns></returns>
     [HttpPost]
@@ -71,10 +92,10 @@ public class AddressesController : BaseController
         try
         {
             var command = _mapper.Map<CreateAddressCommand>(model);
-            var result = await _mediator.Send(command);
+            var createdDto = await _mediator.Send(command);
 
-            // TODO: Add Etag to header & map to ResponseModel
-            return Ok(result);
+            // TODO: Add Etag to header
+            return CreatedAtAction(nameof(GetAddressById), new { id = createdDto.Id }, createdDto);
         }
         catch (ValidationException ex)
         {

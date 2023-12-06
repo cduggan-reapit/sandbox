@@ -28,6 +28,6 @@ public static class ErrorModelFactory
             Errors: new Dictionary<string, string[]>
             {
                 { "Message", new [] { ex.Message } }, 
-                { "Type", new [] { ex.GetType().ToString() } },
+                { "Type", new [] { ex.GetType().Name } },
             });
 }

@@ -28,4 +28,22 @@ public class ErrorModelFactoryTests
 
         actual.Should().BeEquivalentTo(expectedResult);
     }
+
+    [Fact]
+    public void GetErrorModel_ShouldCreateErrorModel_FromGivenException()
+    {
+        var exception = new InvalidDataException("Test exception");
+        
+        var expected = new ErrorModel(
+            Message: ErrorModelMessages.InternalServerError,
+            Errors: new Dictionary<string, string[]>
+            {
+                { "Message", new[] { exception.Message } },
+                { "Type", new[] { exception.GetType().Name } }
+            }); 
+        
+        var actual = exception.GetErrorModel();
+
+        actual.Should().BeEquivalentTo(expected);
+    }
 }
