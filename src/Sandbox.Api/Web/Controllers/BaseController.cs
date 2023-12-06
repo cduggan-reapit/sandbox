@@ -9,4 +9,12 @@ namespace Sandbox.Api.Web.Controllers;
 [Route("/api/v{version:apiVersion}/[controller]")]
 public abstract class BaseController : ControllerBase
 {
+    /// <summary>
+    /// Adds the provided ETag to the response headers
+    /// </summary>
+    /// <param name="etag"></param>
+    protected void SetResponseHeaderETag(string etag)
+    {
+        Response.Headers.ETag = etag;
+    }
 }

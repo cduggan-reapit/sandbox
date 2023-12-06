@@ -22,11 +22,10 @@ public class DeleteAddressByIdCommandHandler : IRequestHandler<DeleteAddressById
     {
         var address = await _addressRepository.GetByIdAsync(request.Id, cancellationToken);
 
-        // TODO: Add NotFoundException class to Common
         if (address == null)
             throw new NotFoundException(typeof(Address), request.Id);
 
-        // TODO: Add EntityConflictException class to common
+        // TODO: Decide what to put in this error
         if (request.Etag != address.GenerateEtagForEntity())
             throw new EntityConflictException("");
         

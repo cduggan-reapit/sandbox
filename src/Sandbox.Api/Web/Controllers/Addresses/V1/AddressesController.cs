@@ -78,8 +78,8 @@ public class AddressesController : BaseController
             
             if(dto == null)
                 return NotFound();
-            
-            Response.Headers.ETag = dto.EntityTag;
+
+            SetResponseHeaderETag(dto.EntityTag);
             
             var model = _mapper.Map<ReadAddressResponseModel>(dto);
             return Ok(model);
@@ -109,7 +109,7 @@ public class AddressesController : BaseController
             if(dto == null)
                 return NotFound();
             
-            Response.Headers.ETag = dto.EntityTag;
+            SetResponseHeaderETag(dto.EntityTag);
             
             return NoContent();
         }
@@ -137,7 +137,8 @@ public class AddressesController : BaseController
             var command = _mapper.Map<CreateAddressCommand>(model);
             var createdDto = await _mediator.Send(command);
 
-            // TODO: Add Etag to header?
+            SetResponseHeaderETag(createdDto.EntityTag);
+            
             return CreatedAtAction(nameof(GetAddressById), new { id = createdDto.Id }, createdDto);
         }
         catch (ValidationException ex)
