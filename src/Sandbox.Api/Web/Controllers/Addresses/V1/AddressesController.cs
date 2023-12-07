@@ -2,6 +2,7 @@
 using AutoMapper;
 using FluentValidation;
 using MediatR;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Sandbox.Api.Common.Exceptions;
 using Sandbox.Api.Core.Addresses.Commands.CreateAddress;
@@ -76,14 +77,15 @@ public class AddressesController : BaseController
         try
         {
             var dto = await _mediator.Send(new GetAddressByIdQuery(id));
-            
-            if(dto == null)
-                return NotFound();
 
             SetResponseHeaderETag(dto.EntityTag);
-            
+
             var model = _mapper.Map<ReadAddressResponseModel>(dto);
             return Ok(model);
+        }
+        catch (NotFoundException ex)
+        {
+            return NotFound(ex.GetNotFoundErrorModel());
         }
         catch (Exception ex)
         {
@@ -99,7 +101,7 @@ public class AddressesController : BaseController
     [HttpHead("{id}")]
     [ProducesResponseType(204)]
     [ProducesResponseType(typeof(ApplicationErrorModel), 404)]
-    [ProducesErrorResponseType(typeof(ValidationErrorModel))]
+    [ProducesErrorResponseType(typeof(ApplicationErrorModel))]
     public async Task<IActionResult> GetAddressByIdHeaders(Guid id)
     {
         _logger.LogInformation("Attempting to fetch headers for address with Id: '{id}'", id);
@@ -134,7 +136,7 @@ public class AddressesController : BaseController
     [ProducesResponseType(typeof(ReadAddressDto), 200)]
     [ProducesResponseType(typeof(ValidationErrorModel), 400)]
     [ProducesErrorResponseType(typeof(ApplicationErrorModel))]
-    public async Task<IActionResult> CreateAddress([FromBody] CreateAddressRequestModel model)
+    public async Task<IActionResult> CreateAddress([FromBody] WriteAddressRequestModel model)
     {
         _logger.LogInformation("Attempting to create address");
         try
@@ -145,12 +147,16 @@ public class AddressesController : BaseController
             SetResponseHeaderETag(dto.EntityTag);
 
             var responseModel = _mapper.Map<ReadAddressResponseModel>(dto);
-            
+
             return CreatedAtAction(nameof(GetAddressById), new { id = responseModel.Id }, responseModel);
         }
         catch (ValidationException ex)
         {
             return BadRequest(ex.Errors.GetValidationErrorModel());
+        }
+        catch (NotFoundException ex)
+        {
+            return NotFound(ex.GetNotFoundErrorModel());
         }
         catch (Exception ex)
         {
@@ -169,7 +175,7 @@ public class AddressesController : BaseController
     [ProducesResponseType(204)]
     [ProducesResponseType(typeof(ApplicationErrorModel), 404)]
     [ProducesResponseType(typeof(ApplicationErrorModel), 409)]
-    [ProducesErrorResponseType(typeof(ValidationErrorModel))]
+    [ProducesErrorResponseType(typeof(ApplicationErrorModel))]
     public async Task<IActionResult> DeleteAddressById(Guid id, [FromHeader(Name = "If-Match")] string? etag = null)
     {
         _logger.LogInformation("Attempting to delete address with Id: '{id}'", id);
@@ -177,6 +183,41 @@ public class AddressesController : BaseController
         {
             await _mediator.Send(new DeleteAddressByIdCommand(id, etag));
             return NoContent();
+        }
+        catch (NotFoundException ex)
+        {
+            return NotFound(ex.GetNotFoundErrorModel());
+        }
+        catch (EntityConflictException ex)
+        {
+            return Conflict(ex.GetConflictErrorModel());
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+            return StatusCode(StatusCodes.Status500InternalServerError, ex.GetExceptionErrorModel());
+        }
+    }
+
+    [HttpPut("{id}")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(typeof(ValidationErrorModel), 400)]
+    [ProducesResponseType(typeof(ApplicationErrorModel), 404)]
+    [ProducesResponseType(typeof(ApplicationErrorModel), 409)]
+    [ProducesErrorResponseType(typeof(ApplicationErrorModel))]
+    public async Task<IActionResult> PatchAddressById(Guid id, 
+        [FromBody] WriteAddressRequestModel model, 
+        [FromHeader(Name = "If-Match")] string? etag = null)
+    {
+        _logger.LogInformation("Attempting to update address with Id: '{id}'", id);
+        try
+        {
+            // Do thing
+            return Ok();
+        }
+        catch (ValidationException ex)
+        {
+            return BadRequest(ex.Errors.GetValidationErrorModel());
         }
         catch (NotFoundException ex)
         {

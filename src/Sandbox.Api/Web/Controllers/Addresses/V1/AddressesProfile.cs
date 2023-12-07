@@ -9,7 +9,7 @@ public class AddressesProfile : Profile
 {
     public AddressesProfile()
     {
-        CreateMap<CreateAddressRequestModel, CreateAddressCommand>();
+        CreateMap<WriteAddressRequestModel, CreateAddressCommand>();
         CreateMap<ReadAddressDto, ReadAddressResponseModel>();
     }
 }

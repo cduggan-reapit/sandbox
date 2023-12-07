@@ -14,16 +14,21 @@ public static class EntityTagHelper
     /// <returns></returns>
     public static string GenerateEtagForEntity<T>(this T entity) where T : BaseEntity
     {
-        // Use the hash of the entities Guid in 32 digit format 
-        var hashValue = GetHashString(entity.Id.ToString("N"));
+        // Use the identity as base (Type-Guid)
+        var eTagIdentityComponent = string.Concat(typeof(T).Name, "-", entity.Id.ToString("N"));
         
         // Append the modified timestamp in `YYYY-MM-DD HH:mm:ssZ` format
-        hashValue += entity.Modified.ToString("u");
+        var eTagTimestampComponent = entity.Modified.ToString("u");
+       
+        // Use the hash of the entities Guid in 32 digit format 
+        var hashedIdentity = GetHashString(eTagIdentityComponent);
         
-        // Return the hash of the combined result, wrapped in quotes per RFC:
-        // https://www.rfc-editor.org/rfc/rfc7232
-        return string.Concat('"', GetHashString(hashValue), '"');
+        // Return the hash of the combined result
+        return GetHashString(hashedIdentity + eTagTimestampComponent);
     }
+    
+    public static bool IsETagValid<T>(this T entity, string eTag) where T: BaseEntity
+        => eTag.Trim('"').Equals(entity.GenerateEtagForEntity(), StringComparison.OrdinalIgnoreCase);
 
     private static string GetHashString(string text)
     {

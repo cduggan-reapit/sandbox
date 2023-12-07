@@ -11,7 +11,7 @@
 /// <param name="State">The name of the state in which the building is located</param>
 /// <param name="Country">The name of the country in which the building is located</param>
 /// <param name="PostCode">The zip/post code for the building</param>
-public record CreateAddressRequestModel(
+public record WriteAddressRequestModel(
     string AddressType, 
     string Number, 
     string Street, 

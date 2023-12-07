@@ -21,7 +21,7 @@ public class EntityConflictException : ApplicationException
     /// <param name="expected"></param>
     /// <param name="actual"></param>
     public EntityConflictException(string expected, string actual)
-        : base($"ETag Conflict.  Expected {expected} / Actual {actual}")
+        : base($"ETag Conflict. Expected {expected} / Actual {actual}")
     {
         ExpectedETag = expected;
         ActualETag = actual;

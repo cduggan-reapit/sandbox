@@ -17,10 +17,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Hosts\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Sandbox.Api.Data\Sandbox.Api.Data.csproj" />
   </ItemGroup>
 

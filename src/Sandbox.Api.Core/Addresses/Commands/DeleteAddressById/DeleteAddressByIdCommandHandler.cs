@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using MediatR;
+﻿using MediatR;
 using Sandbox.Api.Common.Exceptions;
 using Sandbox.Api.Data.Entities;
 using Sandbox.Api.Data.Helpers;
@@ -10,12 +9,10 @@ namespace Sandbox.Api.Core.Addresses.Commands.DeleteAddressById;
 public class DeleteAddressByIdCommandHandler : IRequestHandler<DeleteAddressByIdCommand>
 {
     private readonly IAddressRepository _addressRepository;
-    private readonly IMapper _mapper;
 
-    public DeleteAddressByIdCommandHandler(IAddressRepository addressRepository, IMapper mapper)
+    public DeleteAddressByIdCommandHandler(IAddressRepository addressRepository)
     {
         _addressRepository = addressRepository;
-        _mapper = mapper;
     }
 
     public async Task Handle(DeleteAddressByIdCommand request, CancellationToken cancellationToken)
@@ -24,9 +21,8 @@ public class DeleteAddressByIdCommandHandler : IRequestHandler<DeleteAddressById
 
         if (address == null)
             throw new NotFoundException(nameof(Address), request.Id);
-
-        // TODO: Decide what to put in this error
-        if (request.Etag != address.GenerateEtagForEntity())
+        
+        if (!address.IsETagValid(request.Etag ?? string.Empty))
             throw new EntityConflictException(address.GenerateEtagForEntity(), request.Etag ?? string.Empty);
         
         await _addressRepository.DeleteAsync(address, cancellationToken);

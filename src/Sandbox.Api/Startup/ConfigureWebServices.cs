@@ -19,7 +19,8 @@ public static class ConfigureWebServices
         });
         
         builder.Services.Configure<RouteOptions>(opts => opts.LowercaseUrls = true);
-        builder.Services.AddControllers();
+        builder.Services.AddControllers()
+            .AddNewtonsoftJson();
         
         return builder;
     }

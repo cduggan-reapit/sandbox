@@ -1,15 +1,18 @@
-﻿using System.Collections;
-using AutoMapper;
+﻿using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Sandbox.Api.Common.Exceptions;
 using Sandbox.Api.Core.Addresses.Commands.CreateAddress;
 using Sandbox.Api.Core.Addresses.DTOs;
 using Sandbox.Api.Core.Addresses.Queries.GetAllAddresses;
+using Sandbox.Api.Data.Entities;
 using Sandbox.Api.Web.Controllers.Addresses.V1;
 using Sandbox.Api.Web.Controllers.Addresses.V1.Models;
 using Sandbox.Api.Web.Errors;
+using FluentValidation.Results;
+using ValidationException = FluentValidation.ValidationException;
 
 namespace Sandbox.Api.Tests.Web.Controllers.Addresses.V1;
 
@@ -73,18 +76,16 @@ public class AddressesControllerTests
         result.Should().NotBeNull();
         result!.StatusCode.Should().Be(500);
         
-        var actualModel = result.Value as ValidationErrorModel;
+        var actualModel = result.Value as ApplicationErrorModel;
         actualModel.Should().BeEquivalentTo(expectedModel);
     }
     
     // POST: /addresses
-    // Create Address should return NoContent
-    // Create Address should return BadRequest
-    // Create Address should return InternalServerError
 
-    [Fact] public async Task CreateAddress_ShouldReturnAddress_WhenValidModelProvided()
+    [Fact] 
+    public async Task CreateAddress_ShouldReturnAddress_WhenValidModelProvided()
     {
-        var model = new CreateAddressRequestModel(
+        var model = new WriteAddressRequestModel(
             AddressType: "commercial",
             Number: "Oficina Principal Dirección",
             Street: "Av. Comandante Espinar 331",
@@ -126,6 +127,104 @@ public class AddressesControllerTests
         resultModel.Should().BeEquivalentTo(expected);
         
         _mediator.Verify(m => m.Send(It.IsAny<CreateAddressCommand>(), It.IsAny<CancellationToken>()), Times.Once);
+    }
+    
+    [Fact]
+    public async Task CreateAddress_ShouldReturnNotFound_WhenAddressNotFound()
+    {
+        var id = Guid.NewGuid();
+        var exception = new NotFoundException(nameof(Address), id);
+        var expectedResponse = exception.GetNotFoundErrorModel();
+        
+        var model = new WriteAddressRequestModel(
+            AddressType: "commercial",
+            Number: "Oficina Principal Dirección",
+            Street: "Av. Comandante Espinar 331",
+            City: "Lima",
+            County: "Miraflores",
+            State: null,
+            Country: "Peru",
+            PostCode: "15046"
+        );
+        
+        _mediator.Setup(m => m.Send(It.IsAny<CreateAddressCommand>(), It.IsAny<CancellationToken>()))
+            .ThrowsAsync(exception);
+
+        var sut = CreateSut();
+        var response = await sut.CreateAddress(model);
+
+        var result = response as ObjectResult;
+        result.Should().NotBeNull();
+        result!.StatusCode.Should().Be(404);
+
+        var content = result.Value as ApplicationErrorModel;
+        content.Should().BeEquivalentTo(expectedResponse);
+    }
+
+    [Fact]
+    public async Task CreateAddress_ShouldReturnBadRequest_WhenValidationFails()
+    {
+        var exception = new ValidationException(new List<ValidationFailure>
+        {
+            new (){ PropertyName = "Property", ErrorMessage = "PropertyError"}
+        });
+        
+        var expectedResponse = exception.Errors.GetValidationErrorModel();
+        
+        var model = new WriteAddressRequestModel(
+            AddressType: "AddressType",
+            Number: "Number",
+            Street: "Street",
+            City: "City",
+            County: "County",
+            State: "State",
+            Country: "Country",
+            PostCode: "PostCode"
+        );
+        
+        _mediator.Setup(m => m.Send(It.IsAny<CreateAddressCommand>(), It.IsAny<CancellationToken>()))
+            .ThrowsAsync(exception);
+
+        var sut = CreateSut();
+        var response = await sut.CreateAddress(model);
+
+        var result = response as ObjectResult;
+        result.Should().NotBeNull();
+        result!.StatusCode.Should().Be(400);
+
+        var content = result.Value as ValidationErrorModel;
+        content.Should().BeEquivalentTo(expectedResponse);
+    }
+    
+    [Fact]
+    public async Task CreateAddress_ShouldReturnInternalServerErrorResult_WhenExceptionCaught()
+    {
+        var exception = new ApplicationException("Test Exception");
+        var expectedResponse = exception.GetExceptionErrorModel();
+        
+        var model = new WriteAddressRequestModel(
+            AddressType: "AddressType",
+            Number: "Number",
+            Street: "Street",
+            City: "City",
+            County: "County",
+            State: "State",
+            Country: "Country",
+            PostCode: "PostCode"
+        );
+        
+        _mediator.Setup(m => m.Send(It.IsAny<CreateAddressCommand>(), It.IsAny<CancellationToken>()))
+            .ThrowsAsync(exception);
+
+        var sut = CreateSut();
+        var response = await sut.CreateAddress(model);
+
+        var result = response as ObjectResult;
+        result.Should().NotBeNull();
+        result!.StatusCode.Should().Be(500);
+
+        var content = result.Value as ApplicationErrorModel;
+        content.Should().BeEquivalentTo(expectedResponse);
     }
     
     private AddressesController CreateSut() 
