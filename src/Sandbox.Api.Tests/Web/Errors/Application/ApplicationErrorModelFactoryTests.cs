@@ -1,9 +1,9 @@
 ﻿using Sandbox.Api.Common.Exceptions;
 using Sandbox.Api.Data.Entities;
-using Sandbox.Api.Web.Errors;
-using static Sandbox.Api.Web.Errors.ApplicationErrorModelMessages;
+using Sandbox.Api.Web.Errors.Application;
+using static Sandbox.Api.Web.Errors.Application.ApplicationErrorModelMessages;
 
-namespace Sandbox.Api.Tests.Web.Errors;
+namespace Sandbox.Api.Tests.Web.Errors.Application;
 
 public class ApplicationErrorModelFactoryTests
 {

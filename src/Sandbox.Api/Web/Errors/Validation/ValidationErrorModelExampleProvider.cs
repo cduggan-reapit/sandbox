@@ -1,6 +1,6 @@
 ﻿using Swashbuckle.AspNetCore.Filters;
 
-namespace Sandbox.Api.Web.Errors;
+namespace Sandbox.Api.Web.Errors.Validation;
 
 /// <summary>
 /// Provider of example data for a <see cref="ValidationErrorModel"/> 

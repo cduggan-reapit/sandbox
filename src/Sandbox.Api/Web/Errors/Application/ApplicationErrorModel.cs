@@ -1,4 +1,4 @@
-﻿namespace Sandbox.Api.Web.Errors;
+﻿namespace Sandbox.Api.Web.Errors.Application;
 
 /// <summary>
 /// User-facing model containing details of an application error

@@ -1,4 +1,4 @@
-﻿namespace Sandbox.Api.Web.Errors;
+﻿namespace Sandbox.Api.Web.Errors.Validation;
 
 /// <summary>
 /// List of standard error messages for use in <see cref="ValidationErrorModel"/>

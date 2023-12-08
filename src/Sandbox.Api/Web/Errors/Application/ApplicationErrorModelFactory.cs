@@ -1,7 +1,7 @@
 ﻿using Sandbox.Api.Common.Exceptions;
-using static Sandbox.Api.Web.Errors.ApplicationErrorModelMessages;
+using static Sandbox.Api.Web.Errors.Application.ApplicationErrorModelMessages;
 
-namespace Sandbox.Api.Web.Errors;
+namespace Sandbox.Api.Web.Errors.Application;
 
 /// <summary>
 /// Methods for the creation of <see cref="ApplicationErrorModel"/> objects

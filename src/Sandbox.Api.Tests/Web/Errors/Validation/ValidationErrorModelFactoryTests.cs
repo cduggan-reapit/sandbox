@@ -1,8 +1,8 @@
 ﻿using FluentValidation.Results;
-using Sandbox.Api.Web.Errors;
-using static Sandbox.Api.Web.Errors.ValidationErrorModelMessages;
+using Sandbox.Api.Web.Errors.Validation;
+using static Sandbox.Api.Web.Errors.Validation.ValidationErrorModelMessages;
 
-namespace Sandbox.Api.Tests.Web.Errors;
+namespace Sandbox.Api.Tests.Web.Errors.Validation;
 
 public class ValidationErrorModelFactoryTests
 {

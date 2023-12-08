@@ -1,4 +1,4 @@
-﻿namespace Sandbox.Api.Web.Errors;
+﻿namespace Sandbox.Api.Web.Errors.Validation;
 
 /// <summary>
 /// User-facing model containing details of an error

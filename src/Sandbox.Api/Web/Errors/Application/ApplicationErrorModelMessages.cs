@@ -1,4 +1,4 @@
-﻿namespace Sandbox.Api.Web.Errors;
+﻿namespace Sandbox.Api.Web.Errors.Application;
 
 /// <summary>
 /// Class containing predefined error messages for <see cref="ApplicationErrorModel"/> objects
