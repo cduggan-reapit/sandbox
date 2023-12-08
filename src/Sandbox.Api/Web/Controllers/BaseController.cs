@@ -16,6 +16,6 @@ public abstract class BaseController : ControllerBase
     protected void SetResponseHeaderETag(string etag)
     {
         // Wrap ETag in quotes per RFC: https://www.rfc-editor.org/rfc/rfc7232
-        Response.Headers.ETag = $"\"etag\"";
+        Response.Headers.ETag = $"\"{etag}\"";
     }
 }
