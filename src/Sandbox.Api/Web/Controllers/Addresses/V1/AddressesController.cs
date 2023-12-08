@@ -2,17 +2,17 @@
 using AutoMapper;
 using FluentValidation;
 using MediatR;
-using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Sandbox.Api.Common.Exceptions;
 using Sandbox.Api.Core.Addresses.Commands.CreateAddress;
 using Sandbox.Api.Core.Addresses.Commands.DeleteAddressById;
+using Sandbox.Api.Core.Addresses.Commands.UpdateAddressById;
 using Sandbox.Api.Core.Addresses.DTOs;
 using Sandbox.Api.Core.Addresses.Queries.GetAddressById;
 using Sandbox.Api.Core.Addresses.Queries.GetAllAddresses;
-using Sandbox.Api.Data.Entities;
 using Sandbox.Api.Web.Controllers.Addresses.V1.Models;
-using Sandbox.Api.Web.Errors;
+using Sandbox.Api.Web.Errors.Application;
+using Sandbox.Api.Web.Errors.Validation;
 
 namespace Sandbox.Api.Web.Controllers.Addresses.V1;
 
@@ -41,7 +41,7 @@ public class AddressesController : BaseController
     }
 
     /// <summary>
-    /// 
+    /// Retrieve a list of all addresses
     /// </summary>
     /// <returns></returns>
     [HttpGet]
@@ -64,10 +64,11 @@ public class AddressesController : BaseController
     }
     
     /// <summary>
-    /// 
+    /// Retrieve an address by it's identifier
     /// </summary>
+    /// <param name="id">The unique identifier of the address to retrieve</param>
     /// <returns></returns>
-    [HttpGet("{id}")]
+    [HttpGet("{id:guid}")]
     [ProducesResponseType(typeof(ReadAddressResponseModel), 200)]
     [ProducesResponseType(typeof(ApplicationErrorModel), 404)]
     [ProducesErrorResponseType(typeof(ApplicationErrorModel))]
@@ -95,10 +96,11 @@ public class AddressesController : BaseController
     }
     
     /// <summary>
-    /// 
+    /// Retrieve the headers which would be returned when getting an address by it's identifier
     /// </summary>
+    /// <param name="id">The unique identifier of the address for which to retrieve headers</param>
     /// <returns></returns>
-    [HttpHead("{id}")]
+    [HttpHead("{id:guid}")]
     [ProducesResponseType(204)]
     [ProducesResponseType(typeof(ApplicationErrorModel), 404)]
     [ProducesErrorResponseType(typeof(ApplicationErrorModel))]
@@ -108,10 +110,7 @@ public class AddressesController : BaseController
         try
         {
             var dto = await _mediator.Send(new GetAddressByIdQuery(id));
-
-            if (dto == null)
-                throw new NotFoundException(nameof(Address), id);
-
+            
             SetResponseHeaderETag(dto.EntityTag);
 
             return NoContent();
@@ -128,7 +127,7 @@ public class AddressesController : BaseController
     }
     
     /// <summary>
-    /// 
+    /// Create a new address
     /// </summary>
     /// <param name="model"></param>
     /// <returns></returns>
@@ -154,10 +153,6 @@ public class AddressesController : BaseController
         {
             return BadRequest(ex.Errors.GetValidationErrorModel());
         }
-        catch (NotFoundException ex)
-        {
-            return NotFound(ex.GetNotFoundErrorModel());
-        }
         catch (Exception ex)
         {
             _logger.LogError(ex, ex.Message);
@@ -166,23 +161,46 @@ public class AddressesController : BaseController
     }
     
     /// <summary>
-    /// 
+    /// Update all properties of the address matching the given identifier
     /// </summary>
-    /// <param name="id"></param>
-    /// <param name="etag"></param>
+    /// <param name="id">The unique identifier of the address to update</param>
+    /// <param name="model">The property values to be applied to the address</param>
+    /// <param name="etag">Identifier for a specific version of an address</param>
     /// <returns></returns>
-    [HttpDelete("{id}")]
+    [HttpPut("{id:guid}")]
     [ProducesResponseType(204)]
+    [ProducesResponseType(typeof(ValidationErrorModel), 400)]
     [ProducesResponseType(typeof(ApplicationErrorModel), 404)]
     [ProducesResponseType(typeof(ApplicationErrorModel), 409)]
     [ProducesErrorResponseType(typeof(ApplicationErrorModel))]
-    public async Task<IActionResult> DeleteAddressById(Guid id, [FromHeader(Name = "If-Match")] string? etag = null)
+    public async Task<IActionResult> UpdateAddressById(Guid id, 
+        [FromBody] WriteAddressRequestModel model, 
+        [FromHeader(Name = "If-Match")] string? etag = null)
     {
-        _logger.LogInformation("Attempting to delete address with Id: '{id}'", id);
+        _logger.LogInformation("Attempting to update address with Id: '{id}'", id);
         try
         {
-            await _mediator.Send(new DeleteAddressByIdCommand(id, etag));
+            var command = new UpdateAddressByIdCommand(Id: id,
+                ETag: etag ?? string.Empty,
+                AddressType: model.AddressType,
+                Number: model.Number,
+                Street: model.Street,
+                City: model.City,
+                County: model.County,
+                State: model.State,
+                Country: model.Country,
+                PostCode: model.PostCode
+            );
+
+            var addressDto = await _mediator.Send(command);
+            
+            SetResponseHeaderETag(addressDto.EntityTag);
+
             return NoContent();
+        }
+        catch (ValidationException ex)
+        {
+            return BadRequest(ex.Errors.GetValidationErrorModel());
         }
         catch (NotFoundException ex)
         {
@@ -198,26 +216,25 @@ public class AddressesController : BaseController
             return StatusCode(StatusCodes.Status500InternalServerError, ex.GetExceptionErrorModel());
         }
     }
-
-    [HttpPut("{id}")]
+    
+    /// <summary>
+    /// Delete the address matching the given identifier
+    /// </summary>
+    /// <param name="id">The unique identifier of the address to delete</param>
+    /// <param name="etag">Identifier for a specific version of an address</param>
+    /// <returns></returns>
+    [HttpDelete("{id:guid}")]
     [ProducesResponseType(204)]
-    [ProducesResponseType(typeof(ValidationErrorModel), 400)]
     [ProducesResponseType(typeof(ApplicationErrorModel), 404)]
     [ProducesResponseType(typeof(ApplicationErrorModel), 409)]
     [ProducesErrorResponseType(typeof(ApplicationErrorModel))]
-    public async Task<IActionResult> PatchAddressById(Guid id, 
-        [FromBody] WriteAddressRequestModel model, 
-        [FromHeader(Name = "If-Match")] string? etag = null)
+    public async Task<IActionResult> DeleteAddressById(Guid id, [FromHeader(Name = "If-Match")] string? etag = null)
     {
-        _logger.LogInformation("Attempting to update address with Id: '{id}'", id);
+        _logger.LogInformation("Attempting to delete address with Id: '{id}'", id);
         try
         {
-            // Do thing
-            return Ok();
-        }
-        catch (ValidationException ex)
-        {
-            return BadRequest(ex.Errors.GetValidationErrorModel());
+            await _mediator.Send(new DeleteAddressByIdCommand(id, etag));
+            return NoContent();
         }
         catch (NotFoundException ex)
         {
