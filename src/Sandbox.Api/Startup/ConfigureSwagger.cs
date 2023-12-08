@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
 using Sandbox.Api.Startup.SwaggerOptions;
-using Sandbox.Api.Web.Errors;
+using Sandbox.Api.Web.Errors.Validation;
 using Swashbuckle.AspNetCore.Filters;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
