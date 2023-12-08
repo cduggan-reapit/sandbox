@@ -1,5 +1,4 @@
-﻿using FluentValidation.Results;
-using Sandbox.Api.Core.Addresses.Commands.CreateAddress;
+﻿using Sandbox.Api.Core.Addresses.Commands.CreateAddress;
 using static Sandbox.Api.Core.Tests.Addresses.Commands.CreateAddress.CreateAddressTestHelpers;
 using static Sandbox.Api.Core.Addresses.Commands.CreateAddress.CreateAddressCommandErrors;
 
@@ -29,7 +28,7 @@ public class CreateAddressCommandValidatorTests
 
         var result = await sut.ValidateAsync(command);
 
-        ShouldHaveOneErrorWithMessage(result, nameof(CreateAddressCommand.AddressType), AddressTypeInvalid);
+        result.ShouldHaveOneErrorWithMessage(nameof(CreateAddressCommand.AddressType), AddressTypeInvalid);
     }
     
     [Fact]
@@ -38,7 +37,7 @@ public class CreateAddressCommandValidatorTests
         var command = GetTestCommand(number: string.Empty);
         var sut = CreateSut();
         var result = await sut.ValidateAsync(command);
-        ShouldHaveOneErrorWithMessage(result, nameof(CreateAddressCommand.Number), NumberRequired);
+        result.ShouldHaveOneErrorWithMessage(nameof(CreateAddressCommand.Number), NumberRequired);
     }
     
     [Fact]
@@ -47,7 +46,7 @@ public class CreateAddressCommandValidatorTests
         var command = GetTestCommand(number: new string('-', 101));
         var sut = CreateSut();
         var result = await sut.ValidateAsync(command);
-        ShouldHaveOneErrorWithMessage(result, nameof(CreateAddressCommand.Number), NumberExceedsMaxLength);
+        result.ShouldHaveOneErrorWithMessage(nameof(CreateAddressCommand.Number), NumberExceedsMaxLength);
     }
     
     [Fact]
@@ -56,7 +55,7 @@ public class CreateAddressCommandValidatorTests
         var command = GetTestCommand(street: string.Empty);
         var sut = CreateSut();
         var result = await sut.ValidateAsync(command);
-        ShouldHaveOneErrorWithMessage(result, nameof(CreateAddressCommand.Street), StreetRequired);
+        result.ShouldHaveOneErrorWithMessage(nameof(CreateAddressCommand.Street), StreetRequired);
     }
     
     [Fact]
@@ -65,7 +64,7 @@ public class CreateAddressCommandValidatorTests
         var command = GetTestCommand(street: new string('-', 501));
         var sut = CreateSut();
         var result = await sut.ValidateAsync(command);
-        ShouldHaveOneErrorWithMessage(result, nameof(CreateAddressCommand.Street), StreetExceedsMaxLength);
+        result.ShouldHaveOneErrorWithMessage(nameof(CreateAddressCommand.Street), StreetExceedsMaxLength);
     }
     
     [Fact]
@@ -74,7 +73,7 @@ public class CreateAddressCommandValidatorTests
         var command = GetTestCommand(city: string.Empty);
         var sut = CreateSut();
         var result = await sut.ValidateAsync(command);
-        ShouldHaveOneErrorWithMessage(result, nameof(CreateAddressCommand.City), CityRequired);
+        result.ShouldHaveOneErrorWithMessage(nameof(CreateAddressCommand.City), CityRequired);
     }
     
     [Fact]
@@ -83,7 +82,7 @@ public class CreateAddressCommandValidatorTests
         var command = GetTestCommand(city: new string('-', 101));
         var sut = CreateSut();
         var result = await sut.ValidateAsync(command);
-        ShouldHaveOneErrorWithMessage(result, nameof(CreateAddressCommand.City), CityExceedsMaxLength);
+        result.ShouldHaveOneErrorWithMessage(nameof(CreateAddressCommand.City), CityExceedsMaxLength);
     }
     
     [Fact]
@@ -92,7 +91,7 @@ public class CreateAddressCommandValidatorTests
         var command = GetTestCommand(county: new string('-', 101));
         var sut = CreateSut();
         var result = await sut.ValidateAsync(command);
-        ShouldHaveOneErrorWithMessage(result, nameof(CreateAddressCommand.County), CountyExceedsMaxLength);
+        result.ShouldHaveOneErrorWithMessage(nameof(CreateAddressCommand.County), CountyExceedsMaxLength);
     }
     
     [Fact]
@@ -101,7 +100,7 @@ public class CreateAddressCommandValidatorTests
         var command = GetTestCommand(state: new string('-', 101));
         var sut = CreateSut();
         var result = await sut.ValidateAsync(command);
-        ShouldHaveOneErrorWithMessage(result, nameof(CreateAddressCommand.State), StateExceedsMaxLength);
+        result.ShouldHaveOneErrorWithMessage(nameof(CreateAddressCommand.State), StateExceedsMaxLength);
     }
     
     [Fact]
@@ -110,7 +109,7 @@ public class CreateAddressCommandValidatorTests
         var command = GetTestCommand(country: string.Empty);
         var sut = CreateSut();
         var result = await sut.ValidateAsync(command);
-        ShouldHaveOneErrorWithMessage(result, nameof(CreateAddressCommand.Country), CountryRequired);
+        result.ShouldHaveOneErrorWithMessage(nameof(CreateAddressCommand.Country), CountryRequired);
     }
     
     [Fact]
@@ -119,7 +118,7 @@ public class CreateAddressCommandValidatorTests
         var command = GetTestCommand(country: new string('-', 101));
         var sut = CreateSut();
         var result = await sut.ValidateAsync(command);
-        ShouldHaveOneErrorWithMessage(result, nameof(CreateAddressCommand.Country), CountryExceedsMaxLength);
+        result.ShouldHaveOneErrorWithMessage(nameof(CreateAddressCommand.Country), CountryExceedsMaxLength);
     }
     
     [Fact]
@@ -128,7 +127,7 @@ public class CreateAddressCommandValidatorTests
         var command = GetTestCommand(postCode: string.Empty);
         var sut = CreateSut();
         var result = await sut.ValidateAsync(command);
-        ShouldHaveOneErrorWithMessage(result, nameof(CreateAddressCommand.PostCode), PostcodeRequired);
+        result.ShouldHaveOneErrorWithMessage(nameof(CreateAddressCommand.PostCode), PostcodeRequired);
     }
     
     [Fact]
@@ -137,20 +136,8 @@ public class CreateAddressCommandValidatorTests
         var command = GetTestCommand(postCode: new string('-', 51));
         var sut = CreateSut();
         var result = await sut.ValidateAsync(command);
-        ShouldHaveOneErrorWithMessage(result, nameof(CreateAddressCommand.PostCode), PostcodeExceedsMaxLength);
+        result.ShouldHaveOneErrorWithMessage(nameof(CreateAddressCommand.PostCode), PostcodeExceedsMaxLength);
     }
     
     private static CreateAddressCommandValidator CreateSut() => new();
-
-    
-
-    private static void ShouldHaveOneErrorWithMessage(ValidationResult result, string propertyName, string expectedMessage)
-    {
-        result.IsValid.Should().BeFalse();
-        result.Errors.Should().HaveCount(1);
-
-        var error = result.Errors.First();
-        error.PropertyName.Should().Be(propertyName);
-        error.ErrorMessage.Should().Be(expectedMessage);
-    }
 }
