@@ -10,8 +10,9 @@ using Sandbox.Api.Core.Addresses.Queries.GetAllAddresses;
 using Sandbox.Api.Data.Entities;
 using Sandbox.Api.Web.Controllers.Addresses.V1;
 using Sandbox.Api.Web.Controllers.Addresses.V1.Models;
-using Sandbox.Api.Web.Errors;
 using FluentValidation.Results;
+using Sandbox.Api.Web.Errors.Application;
+using Sandbox.Api.Web.Errors.Validation;
 using ValidationException = FluentValidation.ValidationException;
 
 namespace Sandbox.Api.Tests.Web.Controllers.Addresses.V1;
