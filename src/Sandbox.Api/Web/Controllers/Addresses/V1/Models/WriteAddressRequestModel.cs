@@ -1,7 +1,7 @@
 ﻿namespace Sandbox.Api.Web.Controllers.Addresses.V1.Models;
 
 /// <summary>
-/// Request model for the creation of new Addresses 
+/// Write model for Addresses 
 /// </summary>
 /// <param name="AddressType">The type of address (unknown/residential/commercial) [unknown/residential/commercial]</param>
 /// <param name="Number">Building name/number</param>
